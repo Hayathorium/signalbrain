@@ -123,6 +123,13 @@ def _parse_command_line(line: str) -> list[str] | None:
     if line.startswith("export "):
         return None
     _, line = _split_inline_env_prefix(line)
+    # Lines with shell operators (pipes/redirects/chains) run as one shell line —
+    # tokenizing them passes "|" as an argument and fails opaquely (the 0582
+    # failure mode in the reference deployment). Allowed leaders only.
+    if any(op in line for op in (" | ", " > ", " >> ", " 2>&1", " && ", " ; ")):
+        if line.startswith(("pytest ", "python ", "python3 ", "bash ")):
+            return ["/bin/bash", "-c", line]
+        return None
     if line.startswith("pytest "):
         return ["pytest"] + _safe_split(line[len("pytest ") :])
     if "-m pytest" in line:
