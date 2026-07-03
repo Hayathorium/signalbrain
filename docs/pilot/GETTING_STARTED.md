@@ -26,7 +26,7 @@ Re-derive it yourself:
 
 ```bash
 git clone https://github.com/whitestone1121-web/receipt-gate-demo && cd receipt-gate-demo
-pip install "git+https://github.com/whitestone1121-web/signalbrain"
+pip install signalbrain
 sb score receipts/*.md --root . --ledger /tmp/fresh-ledger.jsonl --ref HEAD
 sb gate --ledger /tmp/fresh-ledger.jsonl --by-class --window 10
 ```
@@ -34,7 +34,7 @@ sb gate --ledger /tmp/fresh-ledger.jsonl --by-class --window 10
 ### Step 2 — Run the four-beat demo locally (5 min)
 
 ```bash
-pip install "git+https://github.com/whitestone1121-web/signalbrain"
+pip install signalbrain
 git clone https://github.com/whitestone1121-web/signalbrain && bash signalbrain/demo/demo.sh
 ```
 
