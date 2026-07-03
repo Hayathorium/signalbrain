@@ -11,7 +11,7 @@ This repository is **Phase 0 v0.1**: the receipt spec, ledger math, scoring lane
 ## 60-second demo — run it, don't trust it
 
 ```bash
-pip install "git+https://github.com/whitestone1121-web/signalbrain"
+pip install signalbrain
 bash demo/demo.sh
 ```
 
