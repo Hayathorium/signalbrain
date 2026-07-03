@@ -1,0 +1,62 @@
+name: Release to PyPI (trusted publishing)
+
+# Tag-driven, tokenless releases: push a tag `vX.Y.Z` and this workflow builds
+# and publishes via PyPI Trusted Publishing (GitHub OIDC) — no stored secret,
+# nothing to rotate, nothing to paste in a chat ever again.
+#
+# One-time setup on pypi.org (browser, no token):
+#   project signalbrain → Manage → Publishing → Add a new publisher
+#   owner: whitestone1121-web · repo: signalbrain · workflow: release.yml
+#
+# Release checklist enforced by the guard step:
+#   pyproject version == tag == action.yml pin — a release where the Action
+#   installs a different version than the tag ships is silent drift.
+#
+# Tags are immutable once pushed: content fixes get a new patch version,
+# never a moved tag (v0.1.0's move happened at zero adopters; never again).
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Guard — versions agree
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pyver=$(python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          pin=$(grep -oE 'signalbrain==[0-9.]+' action.yml | head -1 | cut -d= -f3)
+          echo "tag=$tag pyproject=$pyver action-pin=$pin"
+          [ "$tag" = "$pyver" ] || { echo "::error::tag $tag != pyproject $pyver"; exit 1; }
+          [ "$tag" = "$pin" ] || { echo "::error::tag $tag != action.yml pin $pin"; exit 1; }
+      - name: Build
+        run: |
+          pip install --quiet build twine
+          python -m build
+          python -m twine check dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write   # OIDC — this IS the credential
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
