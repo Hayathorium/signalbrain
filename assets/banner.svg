@@ -39,8 +39,8 @@
     </g>
     <g transform="translate(660,144)">
       <rect x="0" y="0" width="244" height="24" rx="6" fill="#111a26" stroke="#233043"/>
-      <text x="10" y="16" fill="#5b6b80">claim: +1 contract case</text>
-      <text x="176" y="16" fill="#5b6b80">pin·0</text>
+      <text x="10" y="16" fill="#5b6b80">claim: self-written test</text>
+      <text x="196" y="16" fill="#5b6b80">pin·0</text>
     </g>
   </g>
 </svg>
