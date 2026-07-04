@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "signalbrain"
-version = "0.1.1"
+version = "0.1.2"
 description = "Trust layer for AI-modified software — receipts, ledger, calibrated autonomy"
 readme = "README.md"
 license = { text = "Apache-2.0" }
@@ -25,6 +25,9 @@ mcp = ["mcp>=1.2"]
 [project.scripts]
 sb = "signalbrain.cli:main"
 sb-mcp = "signalbrain.mcp_server:main"
+# MCP Registry clients run `uvx --from "signalbrain[mcp]" signalbrain` — the
+# executable must match the package name (see server.json).
+signalbrain = "signalbrain.mcp_server:main"
 
 [project.urls]
 Homepage = "https://signalbrain.ai"

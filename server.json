@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.whitestone1121-web/signalbrain",
+  "title": "SignalBrain",
+  "description": "Verifiable improvement receipts for agent changes — emit, validate, and read earned-autonomy standing from a local ledger",
+  "version": "0.1.2",
+  "websiteUrl": "https://signalbrain.ai",
+  "repository": {
+    "url": "https://github.com/whitestone1121-web/signalbrain",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "signalbrain",
+      "version": "0.1.2",
+      "runtimeHint": "uvx",
+      "runtimeArguments": [
+        {
+          "type": "named",
+          "name": "--from",
+          "value": "signalbrain[mcp]",
+          "isRequired": true,
+          "description": "Install the mcp extra so the MCP server dependencies are present"
+        }
+      ],
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

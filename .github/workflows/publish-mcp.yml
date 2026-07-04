@@ -1,0 +1,43 @@
+name: Publish to MCP Registry
+
+# Manual, deliberate publish: run AFTER the PyPI release for the version in
+# server.json is live (the registry validates ownership by fetching the PyPI
+# package README and matching the `mcp-name:` comment). Auth is GitHub OIDC —
+# no stored secret; the io.github.whitestone1121-web/* namespace comes from
+# the repo owner identity.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard — server.json version matches pyproject
+        run: |
+          sv=$(python3 -c "import json; print(json.load(open('server.json'))['version'])")
+          pv=$(python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          echo "server.json=$sv pyproject=$pv"
+          [ "$sv" = "$pv" ] || { echo "::error::server.json $sv != pyproject $pv"; exit 1; }
+
+      - name: Guard — PyPI release exists for this version
+        run: |
+          sv=$(python3 -c "import json; print(json.load(open('server.json'))['version'])")
+          curl -sf "https://pypi.org/pypi/signalbrain/$sv/json" >/dev/null \
+            || { echo "::error::signalbrain $sv is not on PyPI yet — publish there first"; exit 1; }
+
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      - name: Authenticate to MCP Registry (OIDC)
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server to MCP Registry
+        run: ./mcp-publisher publish

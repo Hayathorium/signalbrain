@@ -6,7 +6,7 @@ Exposes the receipt lifecycle to any MCP client (goose, Claude Desktop, etc.):
   validate_receipt  check a receipt file against the grammar before committing
   gate_status       read your own earned-autonomy standing from the ledger
 
-Install:  pip install "signalbrain[mcp]"     Run:  sb-mcp
+Install:  pip install "signalbrain[mcp]"     Run:  sb-mcp (or: signalbrain)
 The server is stateless and local: it reads/writes files in the working
 repository. Nothing leaves the machine.
 """
