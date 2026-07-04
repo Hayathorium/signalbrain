@@ -60,8 +60,11 @@ merge, and your autonomy depends on your claims holding. Rules:
 
 - Allowed measure commands: `pytest …`, `python`/`python3 …`, `bash …`,
   `export VAR=value`, and inline `VAR=value cmd` prefixes.
-- Shell pipelines/redirects are supported (`cmd 2>&1 | grep x`) for allowed
-  leaders, but single-purpose commands are more robust.
+- Shell pipelines/redirects are NOT supported: the scorer executes each
+  measure as a plain argv (no shell), so `cmd | grep x` passes `|` and
+  `grep` as *arguments* and fails opaquely — recording an unfair miss
+  against your agent. Write single-purpose commands, or move the pipeline
+  into a committed script and invoke `bash scripts/check_x.sh`.
 - Measures must NOT invoke the scoring pipeline itself (self-reference
   deadlocks the scorer — learned from receipt 0582 in the reference deployment).
 - Measures run from the repo root with the repo's environment; anything they
