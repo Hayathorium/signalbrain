@@ -37,7 +37,7 @@ flowchart TB
 
     classDef box fill:#0f172a,stroke:#475569,color:#cbd5e1
     classDef hot fill:#0d2b1e,stroke:#34d399,color:#a7f3d0
-    class AG,MR,GD,SC,PC,LG,box box
+    class AG,MR,GD,SC,PC,LG,VIS box
     class TR,POL hot
 ```
 
