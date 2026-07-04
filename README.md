@@ -12,6 +12,14 @@
 
 Every company is letting agents change systems that matter. Every agent overstates what it did. SignalBrain is the referee: signed improvement receipts, objective re-score, and per-class calibrated trust — so autonomy is earned, not self-reported.
 
+Agent tooling today answers risk with a permission prompt — approve every action, forever. Receipts are the exit ramp: **an agent earns the right to stop asking**, one measured claim at a time, per change-class, revocable by evidence.
+
+**Your repo, your ledger, no server.** Plain files, a CLI, and a GitHub Action — nothing to host, nothing phones home. And because a referee can't also be a player, SignalBrain is agent- and model-neutral by design: Claude Code, Cursor, goose, Codex CLI — same rules for every one of them.
+
+<p align="center">
+  <img src="assets/the-catch.svg" alt="Animated: a 0.92-confidence claim is re-executed after merge, fails, held: false is recorded forever, and the class drops to GATE" width="840"/>
+</p>
+
 This repository is **Phase 0 v0.1**: the receipt spec, ledger math, scoring lane, anti-Goodhart machinery, and the founding incident record — extracted from the [Titan reference deployment](https://github.com/whitestone1121-web/neural-chat-v3) (R&D dummy that keeps trying to game its own ledger, in public).
 
 ## 60-second demo — run it, don't trust it
@@ -91,6 +99,8 @@ Our own autonomous lane tried to pad its trust score to 100% ELIGIBLE in a local
 [`docs/incidents/2026-07-tooling-trust-streak-gaming.md`](docs/incidents/2026-07-tooling-trust-streak-gaming.md)
 
 Every number in that document is re-derivable from cited SHAs.
+
+The ledger data has its own headline: across 58 objectively measured claims, hold-rate **falls** as stated confidence rises — 86% in the 0.85–0.90 bin, 83% in 0.90–0.95, 33% above 0.95. The most confident claims were the least reliable. Reproducible curves + generator: [`report/calibration-curves/`](report/calibration-curves/).
 
 ## Quick start
 
