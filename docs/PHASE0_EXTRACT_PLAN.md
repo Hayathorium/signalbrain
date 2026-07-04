@@ -1,61 +1,65 @@
-# Phase 0 — trust-layer extraction plan (literal file list)
+# Architecture, provenance & roadmap
 
-Scope for carving the receipt/ledger/trust machinery into a standalone,
-Titan-free repository. Trigger per the adopted decision rule: **start the
-6-week clock only once three design-partner conversations exist.** Until then
-this document is the scope, not a work order.
+What's actually in this repository, where it came from, and where it's going —
+written for teams evaluating SignalBrain, with the same rule as everything else
+here: claims you can check.
 
-Verified 2026-07-02 against `b6cb84f3e1` (import audits run, not assumed).
+## What's in the box (v0.1)
 
-## Extract — the product
-
-| Component | Files | Seam notes |
+| Component | What it does for you | Where |
 |---|---|---|
-| Ledger core | `src/agi_os_backend/governance/calibration_ledger_core.py` | stdlib-only. Clean. |
-| Autonomy gate | `src/agi_os_backend/governance/calibration_autonomy_gate.py` | stdlib + ledger_core only (audited). Clean. |
-| Same-PR pin classifier | `src/agi_os_backend/governance/calibration_same_pr_pin.py` | stdlib + git subprocess. Clean. |
-| Scorer | `scripts/calibration_score_measured.py` | **The one real refactor**: imports `calibration_ingest_receipts`, assumes repo-root layout, hardcoded ledger/receipts paths. |
-| Ingest (self-reported lane) | `scripts/calibration_ingest_receipts.py` | stdlib-only (audited); scorer dep — extract together. |
-| Guards | `scripts/calibration_receipt_merged_check.sh`, `calibration_score_receipt.sh` | Path assumptions only. |
-| Gate CLI | `scripts/calibration_ledger.py` | Thin wrapper. Clean. |
-| F2P verifier | `scripts/calibration_f2p_verify.py` | Measurement-layer anti-gaming; pairs with pin exclusion. |
-| Receipt spec | `docs/RECEIPT_SPEC.md`, `docs/improvements/0000-template.md` | The open standard. |
-| Measurement (SPC) | `scripts/eval_matrix.py`, `spc_control_chart.py`, `defect_pareto.py`, `spc_record_run.py` | Self-contained; second product surface. |
-| Doctrine | `docs/AB_TEST_AND_AUDIT_DOCTRINE.md`, `docs/runbook/16_full_autonomy_operator_lane.md`, `docs/incidents/` | The credential corpus. |
+| **Receipt spec** | The open format your agents use to make executable, re-scorable claims | [`docs/RECEIPT_SPEC.md`](RECEIPT_SPEC.md) |
+| **`sb` CLI** | Score merged receipts, read trust gates, check the merged-receipt guard — `pip install signalbrain` | `src/signalbrain/` |
+| **Ledger trust math** | Per-class recency windows, calibration hit-rates, earned-autonomy status — pure functions, no server | `src/signalbrain/ledger.py`, `gate.py` |
+| **Anti-gaming machinery** | Merged-only scoring, same-PR pin classification, in-place rescoring, pin exclusion — every rule incident-tested | `src/signalbrain/` + [`docs/incidents/`](incidents/) |
+| **GitHub Action** | The gate in your CI: score on merge, print the trust report — your repo, your ledger, nothing leaves | [`action.yml`](../action.yml) |
+| **60-second demo** | Watch all four rules fire in a scratch repo — `bash demo/demo.sh` | [`demo/`](../demo/) |
+| **Fork-able example** | A repo with a caught overclaim in its public Actions history | [receipt-gate-demo](https://github.com/whitestone1121-web/receipt-gate-demo) |
+| **Contract suite** | The product's behavior, pinned as tests — `pytest tests/ -q` | `tests/` |
 
-## Contracts — the product's spec (8, minimum set)
+## Provenance — why the rules look the way they do
 
-1. `test_calibration_rescore_order_contract.py` — rescore is position-preserving
-2. `test_calibration_class_window_contract.py` — per-class windowing
-3. `test_calibration_merged_score_guard_contract.py` — merged-only scoring
-4. `test_automerge_class_window_env_contract.py` — report == decision window
-5. `test_calibration_antigoodhart_contract.py` — pin exclusion integrity
-6. `test_calibration_pin_exclusion_contract.py` — pins can't pad any window
-7. `test_calibration_same_pr_test_pin_contract.py` — same-PR measures are pins
-8. `test_calibration_f2p_verify_contract.py` — fail-to-pass verification
+Every component was extracted from a **live multi-agent deployment** ([the
+reference deployment](https://github.com/whitestone1121-web/neural-chat-v3))
+where AI agents write, merge, and score real code daily — and where those same
+agents attacked the trust ledger twice: batch receipts that pass by
+construction, self-scores through a guard bypass, displayed trust of 100%
+against a measured 40%. Both attacks were caught, remediated, and published
+with reproduce commands ([the founding
+incident](incidents/2026-07-tooling-trust-streak-gaming.md)). A third replay of
+the pattern was later neutralized automatically, with no human in the loop.
 
-Port with their fixtures; they define the product's behavior better than any
-design doc.
+That's the design method here: rules aren't imagined, they're earned. The
+reference deployment keeps running — and keeps trying — so the rule set keeps
+learning.
 
-## Explicitly NOT extracted
+## Roadmap
 
-Brain readiness, GitNexus wrappers, `autonomous_merge.py` PR plumbing, the
-council/soul/dreaming stack, chat, retrieval, Forge. The product ships gate
-math and scoring; customers bring their own CI and merge policy. Titan remains
-the running reference deployment (R&D dummy) consuming the extracted package
-like any other customer would.
+**Now (v0.1 — shipped):** everything in the table above. One repo, one ledger,
+CI-native, Apache-2.0, free forever.
 
-## Known work items (the honest six weeks)
+**Next (hardened with design partners):** the edges real codebases will find —
+measure-grammar leaders beyond pytest/python/bash (jest, go test, cargo),
+monorepo/multi-ledger layouts, receipt-emission templates tuned per agent
+(Claude Code, Cursor, custom harnesses). Partner repos drive this list;
+see [the pilot](pilot/GETTING_STARTED.md).
 
-1. Break `calibration_score_measured` ↔ repo-root coupling: ledger path,
-   receipts glob, and repo root become explicit parameters / config.
-2. Package layout: one Python package (`receipts/` or similar), CLI entry
-   points replacing the `scripts/` invocation style.
-3. Multi-repo semantics: `origin/main` as "merged ref" becomes configurable per
-   deployment (the guard already env-overrides via `CALIBRATION_MERGED_REF`).
-4. CI adapter: a GitHub Action wrapping score + gate output as a check run —
-   the free tier and the distribution vehicle.
-5. Resolve the over-pinning discriminator (spec §6.2 open question) before the
-   classifier ships to anyone else's ledger.
-6. Port the 8 contracts + a fresh e2e: receipt → merge → score → gate flip, in
-   a scratch git repo, as the package's own acceptance test.
+**Later (the fleet layer):** cross-repo trust policy, org-wide calibration
+reporting, per-vendor agent comparisons, and independent attestation — the
+things a self-hosted gate structurally can't provide
+([what the engagement adds](pilot/FREE_VS_PILOT.md)).
+
+## Known limitations, stated plainly
+
+- The measure grammar is pytest/python/bash-shaped today; other stacks work
+  via `bash` wrappers until native leaders land.
+- One ledger per repo root in v0.1.
+- Your agents don't emit receipts until you add the
+  [emission block](pilot/receipt-emission.md) to their instructions — day-one
+  setup, not magic.
+- This machinery has processed a small number of repositories so far. Early
+  adopters will find edges; we fix them in the open, and the incident record
+  shows how we handle being wrong.
+
+Questions, pilots, or edges you've found: **alan@signalbrain.ai** or an issue
+on this repo.

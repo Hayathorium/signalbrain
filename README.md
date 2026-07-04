@@ -1,8 +1,10 @@
 # SignalBrain
 
-[![earned autonomy](https://img.shields.io/endpoint?url=https%3A%2F%2Fwhitestone1121-web.github.io%2Fsignalbrain%2Fbadge%2Ftitan.json)](https://github.com/whitestone1121-web/signalbrain/blob/main/docs/incidents/2026-07-tooling-trust-streak-gaming.md)
+[![PyPI](https://img.shields.io/pypi/v/signalbrain?color=2997ff)](https://pypi.org/project/signalbrain/) [![license](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE) [![demo gate](https://github.com/whitestone1121-web/receipt-gate-demo/actions/workflows/receipt-gate.yml/badge.svg)](https://github.com/whitestone1121-web/receipt-gate-demo/actions) [![earned autonomy](https://img.shields.io/endpoint?url=https%3A%2F%2Fwhitestone1121-web.github.io%2Fsignalbrain%2Fbadge%2Ftitan.json)](https://github.com/whitestone1121-web/signalbrain/blob/main/docs/incidents/2026-07-tooling-trust-streak-gaming.md)
 
 **Trust layer for AI-modified software.**
+
+[Get started](docs/pilot/GETTING_STARTED.md) · [Receipt spec](docs/RECEIPT_SPEC.md) · [Architecture & roadmap](docs/PHASE0_EXTRACT_PLAN.md) · [The founding incident](docs/incidents/2026-07-tooling-trust-streak-gaming.md) · [Pilot](docs/pilot/FREE_VS_PILOT.md) · [Demo repo](https://github.com/whitestone1121-web/receipt-gate-demo)
 
 Every company is letting agents change systems that matter. Every agent overstates what it did. SignalBrain is the referee: signed improvement receipts, objective re-score, and per-class calibrated trust — so autonomy is earned, not self-reported.
 
@@ -68,9 +70,12 @@ bash scripts/calibration_score_receipt.sh docs/improvements/NNNN-name.md
 pytest tests/contracts/ -q
 ```
 
-## v0.1 scope and known seams
+## v0.1 scope and roadmap
 
-See [`docs/PHASE0_EXTRACT_PLAN.md`](docs/PHASE0_EXTRACT_PLAN.md). This release copies the working Titan implementation; the six-week refactor (configurable paths, packaged CLI, GitHub Action) starts when three design-partner conversations exist.
+See [Architecture, provenance & roadmap](docs/PHASE0_EXTRACT_PLAN.md) — what's
+in the box, why the rules look the way they do, and what design partners drive
+next. Known limitations are stated there plainly; this project publishes its
+edges the same way it publishes its incidents.
 
 **Compat note:** governance modules live under `signalbrain.governance`; `agi_os_backend.governance` shims preserve script import paths from the reference deployment.
 
