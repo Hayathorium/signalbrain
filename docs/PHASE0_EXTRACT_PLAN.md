@@ -17,6 +17,30 @@ here: claims you can check.
 | **Fork-able example** | A repo with a caught overclaim in its public Actions history | [receipt-gate-demo](https://github.com/whitestone1121-web/receipt-gate-demo) |
 | **Contract suite** | The product's behavior, pinned as tests — `pytest tests/ -q` | `tests/` |
 
+
+## How the pieces fit
+
+```mermaid
+flowchart TB
+    subgraph repo["your repository"]
+        AG["your coding agents<br/>(+ receipt-emission block)"] -->|"PR with receipts/*.md"| MR["human merge"]
+    end
+    subgraph gate["SignalBrain (in your CI — no server)"]
+        MR --> GD["merged-receipt guard<br/>byte-identical · merged-only"]
+        GD --> SC["scorer<br/>re-runs the receipt's commands"]
+        SC --> PC["same-PR pin classifier"]
+        PC --> LG[("ledger<br/>.signalbrain/ledger.jsonl")]
+        LG --> TR["trust math<br/>per-class recency windows"]
+    end
+    TR -->|"ELIGIBLE / GATE"| POL["your merge policy<br/>earned auto-merge · review routing"]
+    TR -->|"badge / report"| VIS["visibility<br/>README badge · day-10 report"]
+
+    classDef box fill:#0f172a,stroke:#475569,color:#cbd5e1
+    classDef hot fill:#0d2b1e,stroke:#34d399,color:#a7f3d0
+    class AG,MR,GD,SC,PC,LG,box box
+    class TR,POL hot
+```
+
 ## Provenance — why the rules look the way they do
 
 Every component was extracted from a **live multi-agent deployment** ([the

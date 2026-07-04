@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.svg" alt="SignalBrain — the trust layer for AI-modified software" width="820"/>
+</p>
+
 # SignalBrain
 
 [![PyPI](https://img.shields.io/pypi/v/signalbrain?color=2997ff)](https://pypi.org/project/signalbrain/) [![license](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE) [![demo gate](https://github.com/whitestone1121-web/receipt-gate-demo/actions/workflows/receipt-gate.yml/badge.svg)](https://github.com/whitestone1121-web/receipt-gate-demo/actions) [![earned autonomy](https://img.shields.io/endpoint?url=https%3A%2F%2Fwhitestone1121-web.github.io%2Fsignalbrain%2Fbadge%2Ftitan.json)](https://github.com/whitestone1121-web/signalbrain/blob/main/docs/incidents/2026-07-tooling-trust-streak-gaming.md)
@@ -17,7 +21,12 @@ pip install signalbrain
 bash demo/demo.sh
 ```
 
-Real output (scratch repo built on the fly — no mocks):
+<p align="center">
+  <img src="assets/demo-terminal.svg" alt="demo.sh output: self-score refused, pins earn zero trust, honest failure recorded, ELIGIBLE earned at n=10" width="840"/>
+</p>
+
+<details>
+<summary>Raw transcript (real output — no mocks)</summary>
 
 ```text
 ▶ 1. An agent tries to score its own claim BEFORE anyone merged it
@@ -36,6 +45,35 @@ Real output (scratch repo built on the fly — no mocks):
 ▶ 4. Ten claims that actually hold
   "tooling": { "hit_rate": 1.0, "n": 10, "status": "auto-merge ELIGIBLE" }
   earned by track record, revocable by evidence. Autonomy is graduated, never granted.
+```
+
+</details>
+
+## The receipt lifecycle
+
+```mermaid
+flowchart LR
+    A["Agent ships change<br/>+ receipt"] --> B{"human<br/>merges?"}
+    B -- "no" --> R["refused — unmerged claims<br/>cannot be scored"]
+    B -- "yes" --> C["sb score<br/>re-runs the receipt's<br/>own commands"]
+    C --> D{"measured only by<br/>tests it wrote itself?"}
+    D -- "yes" --> P["invariant_pin<br/>recorded · zero trust"]
+    D -- "no" --> E{"commands<br/>pass?"}
+    E -- "yes" --> H["held ✓"]
+    E -- "no" --> F["held ✗<br/>recorded forever"]
+    H --> L[("ledger")]
+    F --> L
+    P --> L
+    L --> G{"last 10 high-confidence<br/>claims ≥ 95% held?"}
+    G -- "yes" --> M["auto-merge ELIGIBLE<br/>earned · revocable"]
+    G -- "no" --> N["GATE<br/>human review"]
+
+    classDef good fill:#0d2b1e,stroke:#34d399,color:#a7f3d0
+    classDef bad fill:#2b1214,stroke:#f87171,color:#fecaca
+    classDef neutral fill:#0f172a,stroke:#475569,color:#cbd5e1
+    class M,H good
+    class R,F,P bad
+    class A,B,C,D,E,G,L,N neutral
 ```
 
 ## Three layers
@@ -57,18 +95,33 @@ Every number in that document is re-derivable from cited SHAs.
 ## Quick start
 
 ```bash
-export PYTHONPATH=src:scripts
+pip install signalbrain
 
-# Gate report (requires a ledger at docs/calibration/improvement_claim_ledger.jsonl)
+# 1. Teach your agents to emit receipts (paste into CLAUDE.md / .cursorrules):
+#    docs/pilot/receipt-emission.md
+
+# 2. After a receipt merges, score it objectively:
+sb score receipts/0001-tooling-my-change.md --root . --ledger .signalbrain/ledger.jsonl
+
+# 3. Read the trust gates (exit 0 = TRUST earned, 1 = GATE):
+sb gate --ledger .signalbrain/ledger.jsonl --by-class --window 10
+
+# Or wire it into CI — see the fork-able demo's workflow:
+#    https://github.com/whitestone1121-web/receipt-gate-demo
+```
+
+<details>
+<summary>Reference-deployment invocations (legacy scripts, kept for parity)</summary>
+
+```bash
+export PYTHONPATH=src:scripts
 python scripts/calibration_ledger.py docs/calibration/improvement_claim_ledger.jsonl \
   --require-measured --by-class --window 10
-
-# Score one merged receipt
 bash scripts/calibration_score_receipt.sh docs/improvements/NNNN-name.md
-
-# Contract suite (product spec)
-pytest tests/contracts/ -q
+pytest tests/ -q
 ```
+
+</details>
 
 ## v0.1 scope and roadmap
 

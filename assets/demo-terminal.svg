@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="430" viewBox="0 0 880 430" role="img" aria-label="Terminal output of bash demo/demo.sh: self-score refused, pins earn zero trust, honest failure recorded, auto-merge eligibility earned at ten held claims">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect x="20" y="10" width="840" height="400" rx="14" fill="#12141a" stroke="#2a2f3a" filter="url(#shadow)"/>
+
+  <!-- title bar -->
+  <circle cx="48" cy="36" r="6.5" fill="#ff5f57"/>
+  <circle cx="70" cy="36" r="6.5" fill="#febc2e"/>
+  <circle cx="92" cy="36" r="6.5" fill="#28c840"/>
+  <text x="116" y="41" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#8a94a6">bash demo/demo.sh — real output, run it yourself</text>
+  <line x1="20" y1="56" x2="860" y2="56" stroke="#2a2f3a" stroke-width="1"/>
+
+  <g font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="14">
+    <text x="46" y="94"  fill="#eef2f7">▶ An agent scores its own claim before anyone merged it</text>
+    <text x="66" y="118" fill="#f87171">refused (exit 3)</text>
+    <text x="212" y="118" fill="#6e7681">— unmerged claims cannot enter the ledger</text>
+
+    <text x="46" y="158" fill="#eef2f7">▶ A batch of receipts measured only by tests the agent wrote itself</text>
+    <text x="66" y="182" fill="#8a94a6">3 rows recorded · claim_kind:</text>
+    <text x="316" y="182" fill="#f87171">invariant_pin</text>
+    <text x="66" y="204" fill="#6e7681">green results, ZERO earned trust — pins are recorded, never counted</text>
+
+    <text x="46" y="244" fill="#eef2f7">▶ An honest failure — stated confidence 0.9</text>
+    <text x="66" y="268" fill="#f87171">"held": false</text>
+    <text x="188" y="268" fill="#6e7681">— recorded forever; that gap is the product</text>
+
+    <text x="46" y="308" fill="#eef2f7">▶ Ten claims that actually hold</text>
+    <text x="66" y="332" fill="#34d399">tooling · hit-rate 100% · n=10 → auto-merge ELIGIBLE</text>
+    <text x="66" y="354" fill="#6e7681">earned by track record, revocable by evidence</text>
+
+    <text x="46" y="392" fill="#5b6b80">$ pip install signalbrain &amp;&amp; bash demo/demo.sh</text>
+  </g>
+</svg>

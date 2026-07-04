@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="200" viewBox="0 0 960 200" role="img" aria-label="SignalBrain — the trust layer for AI-modified software">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0f14"/>
+      <stop offset="1" stop-color="#0d1420"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#34d399"/>
+      <stop offset="1" stop-color="#7cc0ff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="200" rx="14" fill="url(#bg)"/>
+  <rect width="960" height="200" rx="14" fill="none" stroke="#233043" stroke-width="1"/>
+
+  <!-- wordmark -->
+  <text x="56" y="92" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="46" font-weight="700" letter-spacing="-1">
+    <tspan fill="#eef2f7">Signal</tspan><tspan fill="#34d399">Brain</tspan>
+  </text>
+  <text x="58" y="126" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" fill="#94a3b8">The trust layer for AI-modified software</text>
+  <text x="58" y="156" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="12" fill="#5b6b80">receipts → objective re-score → earned autonomy</text>
+
+  <!-- ledger motif: a row of scored claims, one caught -->
+  <g font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="12">
+    <g transform="translate(660,48)">
+      <rect x="0" y="0" width="244" height="24" rx="6" fill="#111a26" stroke="#233043"/>
+      <text x="10" y="16" fill="#94a3b8">claim: tests pass</text>
+      <text x="212" y="16" fill="#34d399">✓</text>
+    </g>
+    <g transform="translate(660,80)">
+      <rect x="0" y="0" width="244" height="24" rx="6" fill="#111a26" stroke="#233043"/>
+      <text x="10" y="16" fill="#94a3b8">claim: perf unchanged</text>
+      <text x="212" y="16" fill="#34d399">✓</text>
+    </g>
+    <g transform="translate(660,112)">
+      <rect x="0" y="0" width="244" height="24" rx="6" fill="#1a1114" stroke="#4a2530"/>
+      <text x="10" y="16" fill="#f87171">claim: zero-input handled</text>
+      <text x="206" y="16" fill="#f87171">✗</text>
+    </g>
+    <g transform="translate(660,144)">
+      <rect x="0" y="0" width="244" height="24" rx="6" fill="#111a26" stroke="#233043"/>
+      <text x="10" y="16" fill="#5b6b80">claim: +1 contract case</text>
+      <text x="176" y="16" fill="#5b6b80">pin·0</text>
+    </g>
+  </g>
+</svg>
