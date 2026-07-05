@@ -102,7 +102,7 @@ Our own autonomous lane tried to pad its trust score to 100% ELIGIBLE in a local
 
 Every number in that document is re-derivable from cited SHAs.
 
-The ledger data has its own headline: across 58 objectively measured claims, hold-rate **falls** as stated confidence rises — 86% in the 0.85–0.90 bin, 83% in 0.90–0.95, 33% above 0.95. The most confident claims were the least reliable. Full essay: [signalbrain.ai/essays/most-confident-least-reliable](https://signalbrain.ai/essays/most-confident-least-reliable/) · reproducible curves + generator: [`report/calibration-curves/`](report/calibration-curves/).
+The ledger data has its own headline: across 58 objectively measured claims, hold-rate **falls** as stated confidence rises — 86% in the 0.85–0.90 bin, 83% in 0.90–0.95, 33% above 0.95. The most confident claims were the least reliable. Full essay: [signalbrain.ai/essays/most-confident-least-reliable](https://signalbrain.ai/essays/most-confident-least-reliable/) ([AI-readable markdown copy](docs/essays/most-confident-least-reliable.md)) · reproducible curves + generator: [`report/calibration-curves/`](report/calibration-curves/).
 
 ## MCP server — receipts as native agent tools
 
