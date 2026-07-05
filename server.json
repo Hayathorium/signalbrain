@@ -3,7 +3,7 @@
   "name": "io.github.whitestone1121-web/signalbrain",
   "title": "SignalBrain",
   "description": "Verifiable improvement receipts for agent changes — emit, validate, and read earned autonomy",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "websiteUrl": "https://signalbrain.ai",
   "repository": {
     "url": "https://github.com/whitestone1121-web/signalbrain",
@@ -14,7 +14,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "signalbrain",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "runtimeHint": "uvx",
       "runtimeArguments": [
         {

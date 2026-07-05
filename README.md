@@ -49,6 +49,8 @@ What it does not detect:
 
 On breach, SignalBrain is fail-closed at the interface you choose: `sb check` returns a nonzero guard code, `sb score` refuses unmerged/drifted receipts instead of writing earned trust, and `sb gate` exits `1` for GATE. In CI this blocks the workflow; in a scheduler it can halt the next run; in a runtime system it is a circuit breaker only if you connect that exit status to one.
 
+Operational examples: [`docs/INTEGRITY_BREACH_RUNBOOK.md`](docs/INTEGRITY_BREACH_RUNBOOK.md). Release and publishing controls: [`docs/RELEASE_AND_DISTRIBUTION.md`](docs/RELEASE_AND_DISTRIBUTION.md).
+
 ## 60-second demo — run it, don't trust it
 
 ```bash
