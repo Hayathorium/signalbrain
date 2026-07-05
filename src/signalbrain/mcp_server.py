@@ -25,7 +25,12 @@ except ImportError as exc:  # pragma: no cover
     ) from exc
 
 from .gate import per_class
-from .receipt import CHANGE_CLASSES, parse_receipt
+from .receipt import (
+    CHANGE_CLASSES,
+    UNSUPPORTED_SHELL_GRAMMAR_MESSAGE,
+    measure_grammar_errors,
+    parse_receipt,
+)
 
 mcp = FastMCP(
     "signalbrain",
@@ -90,6 +95,9 @@ def emit_receipt(
         return json.dumps({"ok": False, "error": "date required as YYYY-MM-DD"})
     if not how_measured_commands:
         return json.dumps({"ok": False, "error": "at least one measure command required"})
+    command_block = "### How measured\n\n```bash\n" + "\n".join(how_measured_commands) + "\n```"
+    if measure_grammar_errors(command_block):
+        return json.dumps({"ok": False, "error": UNSUPPORTED_SHELL_GRAMMAR_MESSAGE})
 
     root = Path(repo_root).resolve()
     rdir = root / receipts_dir
@@ -154,6 +162,9 @@ def validate_receipt(path: str) -> str:
     parsed = parse_receipt(p)
     if parsed is None:
         return json.dumps({"ok": False, "error": "unparseable: missing Confidence/Verdict, or verdict is not_applicable"})
+    if parsed.measure_errors:
+        return json.dumps({"ok": False, "error": UNSUPPORTED_SHELL_GRAMMAR_MESSAGE,
+                           "measure_errors": parsed.measure_errors})
     return json.dumps({"ok": True, "stem": parsed.stem, "change_class": parsed.change_class,
                        "confidence": parsed.confidence, "verdict": parsed.verdict,
                        "measure_commands": len(parsed.commands),

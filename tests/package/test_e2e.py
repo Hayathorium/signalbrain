@@ -118,6 +118,14 @@ def test_honest_failure_is_recorded(repo):
     assert result["row"]["measure_errors"]
 
 
+def test_unsupported_shell_grammar_is_recorded_as_measure_error(repo):
+    merged = _merge_receipt(repo, "0003-tooling-shell-grammar", "pytest tests -q | grep passed")
+    result = score_receipt(merged, _cfg(repo))
+    assert result["status"] == "scored"
+    assert result["row"]["held"] is False
+    assert any("unsupported_shell_grammar" in err for err in result["row"]["measure_errors"])
+
+
 def test_same_pr_test_only_receipt_is_pinned(repo):
     test_body = "def test_pin_me():\n    assert True\n"
     merged = _merge_receipt(

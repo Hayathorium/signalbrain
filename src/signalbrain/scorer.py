@@ -142,10 +142,14 @@ def score_receipt(path: Path, cfg: ScoreConfig) -> dict:
     if already and not cfg.rescore:
         return {"status": "skipped_ledger", "receipt": str(path)}
 
-    if not receipt.commands:
+    if not receipt.commands and not receipt.measure_errors:
         return {"status": "unscoreable", "receipt": str(path), "reason": "no measure commands"}
 
-    held, errors = run_measurement(receipt, cfg)
+    if receipt.measure_errors:
+        held = False
+        errors = receipt.measure_errors
+    else:
+        held, errors = run_measurement(receipt, cfg)
     row: dict = {
         "claim": receipt.stem,
         "confidence": receipt.confidence,

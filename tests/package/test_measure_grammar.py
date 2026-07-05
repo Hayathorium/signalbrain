@@ -1,14 +1,18 @@
-"""Measure-grammar contracts: shell operators run as full shell lines.
+"""Measure-grammar contracts: shell operators are refused with diagnosis.
 
 The 0582 failure mode in the reference deployment: `cmd 2>&1 | grep x` was
 tokenized, passing "|" as an argument — the pipeline never ran and the measure
-failed opaquely. Lines with shell operators now execute via /bin/bash -c,
-restricted to the allowed command leaders.
+failed opaquely. Bare shell grammar is now refused; put complex measurement
+logic in a committed script and invoke that script as argv.
 """
 
 from __future__ import annotations
 
-from signalbrain.receipt import extract_commands_with_env
+from signalbrain.receipt import (
+    UNSUPPORTED_SHELL_GRAMMAR,
+    extract_commands_with_env,
+    measure_grammar_errors,
+)
 
 TMPL = """### How measured
 
@@ -25,14 +29,16 @@ def _cmds(line: str):
     return commands
 
 
-def test_pipe_runs_as_shell_line():
-    cmds = _cmds("bash scripts/lane.sh 2>&1 | grep bugfix")
-    assert cmds == [["/bin/bash", "-c", "bash scripts/lane.sh 2>&1 | grep bugfix"]]
+def test_pipe_is_refused_not_shell_wrapped():
+    line = "bash scripts/lane.sh 2>&1 | grep bugfix"
+    assert _cmds(line) == []
+    assert any(UNSUPPORTED_SHELL_GRAMMAR in err for err in measure_grammar_errors(TMPL.format(line=line)))
 
 
-def test_pytest_with_pipe_runs_as_shell_line():
-    cmds = _cmds("pytest tests/ -q | tail -1")
-    assert cmds == [["/bin/bash", "-c", "pytest tests/ -q | tail -1"]]
+def test_pytest_with_pipe_is_refused():
+    line = "pytest tests/ -q | tail -1"
+    assert _cmds(line) == []
+    assert any(UNSUPPORTED_SHELL_GRAMMAR in err for err in measure_grammar_errors(TMPL.format(line=line)))
 
 
 def test_disallowed_leader_with_pipe_is_rejected():
@@ -50,4 +56,10 @@ def test_inline_env_prefix_with_pipe():
         TMPL.format(line="FOO=1 bash scripts/lane.sh | grep ok")
     )
     assert "export FOO=1" in exports
-    assert commands == [["/bin/bash", "-c", "bash scripts/lane.sh | grep ok"]]
+    assert commands == []
+
+
+def test_redirect_and_chain_tokens_are_diagnosed():
+    for token in (">", ">>", "<", "&&", "||", ";"):
+        line = f"python3 scripts/check.py {token} output.txt"
+        assert any(UNSUPPORTED_SHELL_GRAMMAR in err for err in measure_grammar_errors(TMPL.format(line=line)))

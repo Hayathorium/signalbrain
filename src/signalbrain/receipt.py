@@ -16,6 +16,11 @@ from pathlib import Path
 VERDICTS = ("improvement", "parity", "regression", "not_applicable")
 CHANGE_CLASSES = frozenset({"bugfix", "tooling", "config", "research", "unclassified"})
 CODE_BLOCK = re.compile(r"```(?:bash|sh)?\n(.*?)```", re.S | re.I)
+UNSUPPORTED_SHELL_GRAMMAR = "unsupported_shell_grammar"
+UNSUPPORTED_SHELL_GRAMMAR_MESSAGE = (
+    "shell grammar not supported — move the pipeline into a committed script and invoke it"
+)
+_UNSUPPORTED_SHELL_TOKENS = frozenset({"|", ">", ">>", "<", "&&", "||", ";"})
 _CHANGE_CLASS_FOOTER_RE = re.compile(
     r"^## change_class\s*\r?\n\s*([a-z][a-z0-9_-]*)\s*(?:\r?\n|$)",
     re.MULTILINE | re.IGNORECASE,
@@ -101,6 +106,27 @@ def _safe_split(line: str) -> list[str]:
         return line.replace("\\", " ").split()
 
 
+def unsupported_shell_tokens(line: str) -> list[str]:
+    """Bare shell control operators are not part of the measure argv grammar."""
+    tokens = _safe_split(line)
+    return [tok for tok in tokens if tok in _UNSUPPORTED_SHELL_TOKENS]
+
+
+def measure_grammar_errors(text: str) -> list[str]:
+    errors: list[str] = []
+    section = how_measured_section(text)
+    for match in CODE_BLOCK.finditer(section):
+        body = match.group(1).strip()
+        if not body or body.lower().startswith("not measured"):
+            continue
+        for line in _logical_lines(body):
+            _, command_line = _split_inline_env_prefix(line)
+            tokens = unsupported_shell_tokens(command_line)
+            if tokens:
+                errors.append(f"{UNSUPPORTED_SHELL_GRAMMAR}: {UNSUPPORTED_SHELL_GRAMMAR_MESSAGE}")
+    return errors
+
+
 def _split_inline_env_prefix(line: str) -> tuple[list[str], str]:
     """Split leading VAR=value tokens into synthetic export lines."""
     exports: list[str] = []
@@ -123,12 +149,7 @@ def _parse_command_line(line: str) -> list[str] | None:
     if line.startswith("export "):
         return None
     _, line = _split_inline_env_prefix(line)
-    # Lines with shell operators (pipes/redirects/chains) run as one shell line —
-    # tokenizing them passes "|" as an argument and fails opaquely (the 0582
-    # failure mode in the reference deployment). Allowed leaders only.
-    if any(op in line for op in (" | ", " > ", " >> ", " 2>&1", " && ", " ; ")):
-        if line.startswith(("pytest ", "python ", "python3 ", "bash ")):
-            return ["/bin/bash", "-c", line]
+    if unsupported_shell_tokens(line):
         return None
     if line.startswith("pytest "):
         return ["pytest"] + _safe_split(line[len("pytest ") :])
@@ -175,6 +196,7 @@ class Receipt:
     change_class: str
     exports: list[str] = field(default_factory=list)
     commands: list[list[str]] = field(default_factory=list)
+    measure_errors: list[str] = field(default_factory=list)
 
 
 def parse_receipt(path: Path) -> Receipt | None:
@@ -188,6 +210,7 @@ def parse_receipt(path: Path) -> Receipt | None:
     if verd == "not_applicable":
         return None
     exports, commands = extract_commands_with_env(text)
+    measure_errors = measure_grammar_errors(text)
     stem = path.stem
     return Receipt(
         path=path,
@@ -197,4 +220,5 @@ def parse_receipt(path: Path) -> Receipt | None:
         change_class=change_class_of(text, stem=stem),
         exports=exports,
         commands=commands,
+        measure_errors=measure_errors,
     )

