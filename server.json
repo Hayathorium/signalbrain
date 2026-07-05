@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.whitestone1121-web/signalbrain",
   "title": "SignalBrain",
-  "description": "Verifiable improvement receipts for governed process changes ? emit, validate, and read earned autonomy",
+  "description": "Verifiable receipts for governed process changes; emit, validate, and gate trust",
   "version": "0.1.4",
   "websiteUrl": "https://signalbrain.ai",
   "repository": {

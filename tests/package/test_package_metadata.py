@@ -62,3 +62,8 @@ def test_license_is_declared_as_apache_2():
     assert "Apache License" in license_text
     assert "Version 2.0, January 2004" in license_text
     assert "http://www.apache.org/licenses/LICENSE-2.0" in license_text
+
+
+def test_mcp_registry_description_stays_within_limit():
+    server = json.loads((ROOT / "server.json").read_text())
+    assert len(server["description"]) <= 100
