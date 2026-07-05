@@ -12,6 +12,8 @@
 
 [Get started](docs/pilot/GETTING_STARTED.md) · [Receipt spec](docs/RECEIPT_SPEC.md) · [Architecture & roadmap](docs/PHASE0_EXTRACT_PLAN.md) · [The founding incident](docs/incidents/2026-07-tooling-trust-streak-gaming.md) · [Pilot](docs/pilot/FREE_VS_PILOT.md) · [Demo repo](https://github.com/whitestone1121-web/receipt-gate-demo)
 
+**Try the 60-second receipt gate:** run `pip install signalbrain && bash demo/demo.sh`. If the demo catches something unclear, [open an issue](https://github.com/whitestone1121-web/signalbrain/issues/new); if the invariant makes sense, star the repo so other agent teams can find it.
+
 Every company is letting deterministic governed processes change systems that matter. Every autonomous tool overstates what it did. SignalBrain is the referee: signed improvement receipts, objective re-score, and per-class calibrated trust — so autonomy is earned, not self-reported.
 
 Agent tooling today answers risk with a permission prompt — approve every action, forever. Receipts are the exit ramp: **a governed process earns the right to stop asking**, one measured claim at a time, per change-class, revocable by evidence.
