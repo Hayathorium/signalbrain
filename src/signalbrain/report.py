@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from signalbrain.ledger import load_rows  # Adjust import based on your real codebase structure
+from signalbrain.ledger import load_rows, filter_rows, is_goodhart_excluded_row
 from signalbrain.receipt import extract_commands_with_env
 
 BINS = [(0.80, 0.85), (0.85, 0.90), (0.90, 0.95), (0.95, 1.01)]
@@ -46,12 +46,14 @@ def run_report(ledger_path: Path, receipts_dir: Path, out_dir: Path):
     out_dir.mkdir(parents=True, exist_ok=True)
     all_rows = load_rows(ledger_path)
     
-    # 1. Honesty Rules: Explicitly count exclusions instead of filtering silently
-    excluded_pins = sum(1 for r in all_rows if r.get("claim_kind") == "invariant_pin")
-    excluded_unmeasured = sum(1 for r in all_rows if not r.get("measured", True))
-    
-    # Active items under evaluation
-    measured_rows = [r for r in all_rows if r.get("claim_kind") != "invariant_pin" and r.get("measured", True)]
+    # 1. Honesty Rules: use the SAME predicate as the trust gate so the report
+    #    and the gate always tell the same story (filter_rows require_measured).
+    measured_rows = filter_rows(all_rows, require_measured=True)
+    excluded_pins = sum(1 for r in all_rows if is_goodhart_excluded_row(r))
+    excluded_unmeasured = sum(
+        1 for r in all_rows
+        if r.get("scored_by") != "measured" and not is_goodhart_excluded_row(r)
+    )
     
     # 2. Extract Difficulty Metrics
     for r in measured_rows:

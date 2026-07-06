@@ -6,9 +6,9 @@ def test_report_generation_and_honesty_metrics(tmp_path: Path):
     # 1. Arrange: Create a mock ledger with mixed data
     ledger_file = tmp_path / "mock_ledger.jsonl"
     mock_rows = [
-        {"receipt_id": "rcpt-1", "confidence": 0.82, "held": True, "claim_kind": "standard"},
-        {"receipt_id": "rcpt-2", "confidence": 0.92, "held": False, "claim_kind": "standard"},
-        {"receipt_id": "rcpt-3", "confidence": 0.97, "held": True, "claim_kind": "standard"},
+        {"receipt_id": "rcpt-1", "confidence": 0.82, "held": True, "claim_kind": "standard", "scored_by": "measured"},
+        {"receipt_id": "rcpt-2", "confidence": 0.92, "held": False, "claim_kind": "standard", "scored_by": "measured"},
+        {"receipt_id": "rcpt-3", "confidence": 0.97, "held": True, "claim_kind": "standard", "scored_by": "measured"},
         {"receipt_id": "pin-1", "confidence": 1.0, "held": True, "claim_kind": "invariant_pin"},
         {"receipt_id": "unmeasured-1", "confidence": 0.5, "held": False, "measured": False}
     ]
